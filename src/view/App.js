@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { Layout, Icon, Menu } from 'antd';
-import Home from './Home';
-import User from './User';
-import Setting from './Setting';
+import { Layout, Icon, Menu } from "antd";
+import Home from "./Home";
+import User from "./User";
+import Setting from "./Setting";
 const { Header, Sider, Content } = Layout;
 
 class App extends Component {
@@ -21,9 +21,9 @@ class App extends Component {
         <Layout>
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
             <div className="logo" />
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1" onClick={() => {
-                console.log('1');
+                console.log("1");
               }}>
                 <Icon type="user" />
                 <span>首页</span>
@@ -42,17 +42,17 @@ class App extends Component {
             </Menu>
           </Sider>
           <Layout>
-            <Header style={{ background: '#fff', padding: 0 }}>
+            <Header style={{ background: "#fff", padding: 0 }}>
               <Icon
                 className="trigger"
-                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                type={this.state.collapsed ? "menu-unfold" : "menu-fold"}
                 onClick={this.toggle}
               />
             </Header>
             <Content style={{
-              margin: '24px 16px',
+              margin: "24px 16px",
               padding: 24,
-              background: '#fff',
+              background: "#fff",
               minHeight: 280,
             }}>
               <Route path="/home" component={Home} />

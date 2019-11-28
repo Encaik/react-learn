@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 class Setting extends Component {
     state = {  }
     render() {
-        return (
-            <h1>Setting</h1>
-        );
+      return (
+        <h1>Setting</h1>
+      );
     }
 }
 
