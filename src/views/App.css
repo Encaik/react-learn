@@ -1,0 +1,21 @@
+.App{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: cornflowerblue;
+}
+
+.title{
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.canvas{
+  flex-grow: 1;
+  display: flex;
+}
+
+canvas{
+  margin: auto;
+}
