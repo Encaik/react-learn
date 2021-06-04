@@ -2,19 +2,76 @@ import { Component } from "react";
 import Matter from "matter-js";
 import "./App.css";
 
+let shape = {
+  0:{
+    id:0,
+    texture: "/image/1.png",
+    radius:204
+  },
+  1:{
+    id:1,
+    texture: "/image/2.png",
+    radius:154
+  },
+  2:{
+    id:2,
+    texture: "/image/3.png",
+    radius:154
+  },
+  3:{
+    id:3,
+    texture: "/image/4.png",
+    radius:124
+  },
+  4:{
+    id:4,
+    texture: "/image/5.png",
+    radius:96
+  },
+  5:{
+    id:5,
+    texture: "/image/6.png",
+    radius:91
+  },
+  6:{
+    id:6,
+    texture: "/image/7.png",
+    radius:76
+  },
+  7:{
+    id:7,
+    texture: "/image/8.png",
+    radius:59
+  },
+  8:{
+    id:8,
+    texture: "/image/9.png",
+    radius:54
+  },
+  9:{
+    id:9,
+    texture: "/image/10.png",
+    radius:40
+  },
+  10:{
+    id:10,
+    texture: "/image/11.png",
+    radius:26
+  }
+}
+
 export default class App extends Component {
   state = {
     title: "合成大西瓜",
-    width : 400,
-    height : 700,
+    width : 450,
+    height : 800,
+    maxShapeId:10,
+    nextShape:null,
+    nextObj:null,
   };
 
   componentDidMount() {
     const canvas = document.getElementById("container")
-    canvas.addEventListener('click', event => {
-      let obj = Matter.Bodies.circle(event.layerX,50,(Math.round(Math.random()*5)+1)*10);
-      Matter.Composite.add(engine.world, obj);
-    });
     let engine = Matter.Engine.create();
     let render = Matter.Render.create({
       canvas,
@@ -45,42 +102,134 @@ export default class App extends Component {
       groundRight,
     ]);
 
-    // create two boxes and a ground
-    let boxA = Matter.Bodies.circle(100, 200, (Math.round(Math.random()*5)+1)*10);
-    let boxB = Matter.Bodies.circle(250, 50, (Math.round(Math.random()*5)+1)*10);
-    Matter.Composite.add(engine.world, [
-      boxA,
-      boxB,
-    ]);
+    let objShape = shape[(Math.round(Math.random()*5)+5)]
+    console.log(objShape)
+    this.setState({
+      nextShape:objShape,
+      maxShapeId:5,
+    },()=>{
+      let nextObj = Matter.Bodies.circle(
+        this.state.width/2,
+        50,
+        this.state.nextShape.radius*0.3,
+        {
+          isStatic: true,
+          collisionFilter:{
+            group:-1
+          },
+          render:{
+            sprite:{
+              texture:this.state.nextShape.texture,
+              xScale:0.3,
+              yScale:0.3
+            }
+          }
+        }
+      );
+      Matter.Composite.add(engine.world, nextObj);
+      this.setState({
+        nextObj:nextObj,
+      },()=>{
+        canvas.addEventListener('click', event => {
+          console.log(this.state.maxShapeId)
+          let obj = Matter.Bodies.circle(
+            event.layerX,
+            -50,
+            this.state.nextShape.radius*0.3,
+            {
+              restitution:0.3,
+              render:{
+                sprite:{
+                  texture:this.state.nextShape.texture,
+                  xScale:0.3,
+                  yScale:0.3
+                }
+              }
+            }
+          );
+          obj.label = this.state.nextShape.id;
+          Matter.Composite.add(engine.world, obj);
+          let objShape = shape[(Math.round(Math.random()*(10-this.state.maxShapeId))+this.state.maxShapeId)]
+          let maxShapeId = this.state.maxShapeId;
+          this.setState({
+            nextShape:objShape,
+            maxShapeId:Math.min(maxShapeId,objShape.id)
+          },()=>{
+            let nextObj = Matter.Bodies.circle(
+              this.state.width/2,
+              50,
+              this.state.nextShape.radius*0.3,
+              {
+                isStatic: true,
+                collisionFilter:{
+                  group:1
+                },
+                render:{
+                  sprite:{
+                    texture:this.state.nextShape.texture,
+                    xScale:0.3,
+                    yScale:0.3
+                  }
+                }
+              }
+            );
+            Matter.Composite.remove(engine.world, this.state.nextObj);
+            Matter.Composite.add(engine.world, nextObj);
+            this.setState({
+              nextObj:nextObj,
+            });
+          })
+        });
+      })
+    })
 
 
-    // 添加场景外墙
+    Matter.Events.on(engine, 'collisionStart', (event)=> {
+      let pairs = event.pairs;
+      for (let i = 0; i < pairs.length; i++) {
+        let pair = pairs[i];
+        if(pair.bodyA.label===pair.bodyB.label){
+          let objA = pair.bodyA,objB = pair.bodyB;
+          let x = (objA.position.x + objB.position.x)/2;
+          let y = (objA.position.y + objB.position.y)/2;
+          let objShape = shape[objA.label-1];
+          Matter.Composite.remove(engine.world, [
+            objA,
+            objB,
+          ]);
+          let obj = Matter.Bodies.circle(
+            x,
+            y,
+            objShape.radius*0.3,
+            {
+              restitution:0.3,
+              render:{
+                sprite:{
+                  texture:objShape.texture,
+                  xScale:0.3,
+                  yScale:0.3
+                }
+              }
+            }
+          );
+          obj.label = objShape.id;
+          let maxShapeId = this.state.maxShapeId;
+          this.setState({
+            maxShapeId:Math.min(maxShapeId,objShape.id)
+          });
+          Matter.Composite.add(engine.world, obj);
+          // if(~~objA.label===1){
+          //   alert("你已经合成出了大西瓜，获胜！");
+          //   return;
+          // }
+        }
+      }
+    });
 
-
-    // add mouse control
-    // let mouse = Matter.Mouse.create(render.canvas);
-    // let mouseConstraint = Matter.MouseConstraint.create(engine, {
-    //   mouse: mouse,
-    //   constraint: {
-    //     stiffness: 1,
-    //     render: {
-    //       visible: false,
-    //     },
-    //   },
-    // });
-    //
-    // Matter.Composite.add(engine.world, mouseConstraint);
-
-    // keep the mouse in sync with rendering
-    //render.mouse = mouse;
-
-    // run the renderer
     Matter.Render.run(render);
 
-    // create runner
     let runner = Matter.Runner.create();
 
-    // run the engine
     Matter.Runner.run(runner, engine);
   }
 
