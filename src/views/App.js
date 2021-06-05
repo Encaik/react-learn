@@ -6,57 +6,57 @@ let size = 0.5
 let shape = {
   0:{
     id:0,
-    texture: "/image/1.png",
+    texture: "/react-learn/image/1.png",
     radius:204
   },
   1:{
     id:1,
-    texture: "/image/2.png",
+    texture: "/react-learn/image/2.png",
     radius:154
   },
   2:{
     id:2,
-    texture: "/image/3.png",
+    texture: "/react-learn/image/3.png",
     radius:154
   },
   3:{
     id:3,
-    texture: "/image/4.png",
+    texture: "/react-learn/image/4.png",
     radius:124
   },
   4:{
     id:4,
-    texture: "/image/5.png",
+    texture: "/react-learn/image/5.png",
     radius:96
   },
   5:{
     id:5,
-    texture: "/image/6.png",
+    texture: "/react-learn/image/6.png",
     radius:91
   },
   6:{
     id:6,
-    texture: "/image/7.png",
+    texture: "/react-learn/image/7.png",
     radius:76
   },
   7:{
     id:7,
-    texture: "/image/8.png",
+    texture: "/react-learn/image/8.png",
     radius:59
   },
   8:{
     id:8,
-    texture: "/image/9.png",
+    texture: "/react-learn/image/9.png",
     radius:54
   },
   9:{
     id:9,
-    texture: "/image/10.png",
+    texture: "/react-learn/image/10.png",
     radius:40
   },
   10:{
     id:10,
-    texture: "/image/11.png",
+    texture: "/react-learn/image/11.png",
     radius:26
   }
 }
