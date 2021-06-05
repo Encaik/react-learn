@@ -2,6 +2,7 @@ import { Component } from "react";
 import Matter from "matter-js";
 import "./App.css";
 
+let size = 0.5
 let shape = {
   0:{
     id:0,
@@ -95,7 +96,6 @@ export default class App extends Component {
     let groundRight = Matter.Bodies.rectangle(width+31, height / 2, 60, height, {
       isStatic: true,
     });
-
     Matter.Composite.add(engine.world, [
       groundBottom,
       groundLeft,
@@ -111,17 +111,18 @@ export default class App extends Component {
       let nextObj = Matter.Bodies.circle(
         this.state.width/2,
         50,
-        this.state.nextShape.radius*0.3,
+        this.state.nextShape.radius*size,
         {
           isStatic: true,
           collisionFilter:{
-            group:-1
+            category: 0x0001,
+            mask:0x0001,
           },
           render:{
             sprite:{
               texture:this.state.nextShape.texture,
-              xScale:0.3,
-              yScale:0.3
+              xScale:size,
+              yScale:size
             }
           }
         }
@@ -135,14 +136,17 @@ export default class App extends Component {
           let obj = Matter.Bodies.circle(
             event.layerX,
             -50,
-            this.state.nextShape.radius*0.3,
+            this.state.nextShape.radius*size,
             {
               restitution:0.3,
+              collisionFilter:{
+                category: 0x0002,
+              },
               render:{
                 sprite:{
                   texture:this.state.nextShape.texture,
-                  xScale:0.3,
-                  yScale:0.3
+                  xScale:size,
+                  yScale:size
                 }
               }
             }
@@ -150,25 +154,24 @@ export default class App extends Component {
           obj.label = this.state.nextShape.id;
           Matter.Composite.add(engine.world, obj);
           let objShape = shape[(Math.round(Math.random()*(10-this.state.maxShapeId))+this.state.maxShapeId)]
-          let maxShapeId = this.state.maxShapeId;
           this.setState({
             nextShape:objShape,
-            maxShapeId:Math.min(maxShapeId,objShape.id)
           },()=>{
             let nextObj = Matter.Bodies.circle(
               this.state.width/2,
               50,
-              this.state.nextShape.radius*0.3,
+              this.state.nextShape.radius*size,
               {
                 isStatic: true,
                 collisionFilter:{
-                  group:1
+                  category: 0x0001,
+                  mask:0x0001,
                 },
                 render:{
                   sprite:{
                     texture:this.state.nextShape.texture,
-                    xScale:0.3,
-                    yScale:0.3
+                    xScale:size,
+                    yScale:size
                   }
                 }
               }
@@ -186,6 +189,7 @@ export default class App extends Component {
 
     Matter.Events.on(engine, 'collisionStart', (event)=> {
       let pairs = event.pairs;
+      console.log(event)
       for (let i = 0; i < pairs.length; i++) {
         let pair = pairs[i];
         if(pair.bodyA.label===pair.bodyB.label){
@@ -200,28 +204,29 @@ export default class App extends Component {
           let obj = Matter.Bodies.circle(
             x,
             y,
-            objShape.radius*0.3,
+            objShape.radius*size,
             {
               restitution:0.3,
+              collisionFilter:{
+                category: 0x0002,
+              },
               render:{
                 sprite:{
                   texture:objShape.texture,
-                  xScale:0.3,
-                  yScale:0.3
+                  xScale:size,
+                  yScale:size
                 }
               }
             }
           );
           obj.label = objShape.id;
-          let maxShapeId = this.state.maxShapeId;
-          this.setState({
-            maxShapeId:Math.min(maxShapeId,objShape.id)
-          });
           Matter.Composite.add(engine.world, obj);
-          // if(~~objA.label===1){
-          //   alert("你已经合成出了大西瓜，获胜！");
-          //   return;
-          // }
+          if(~~objA.label===1){
+            setTimeout(()=>{
+              alert("你已经合成出了大西瓜，获胜！");
+            },1000);
+            return;
+          }
         }
       }
     });
